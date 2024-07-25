@@ -34,6 +34,14 @@
             height: 100%;
         }
 
+        #restart {
+            position: absolute;
+            top: 6.5vh;
+            right: 1vh;
+            width: 5vh;
+            height: 5vh;
+        }
+
         #content {
             position: absolute;
             top: 11vh;
@@ -75,9 +83,10 @@
         }
     </style>
 </head>
-<body>
+<body x-data="app">
     <img id="background" src="Screenshot.png">
-    <main id="content" x-data="app" x-on:touchstart="selectChoice(event)">
+    <div id="restart" x-on:touchstart="restartTrick(event)"></div>
+    <main id="content" x-on:touchstart="selectChoice(event)">
         <span id="date">13. July 2024 at 10:04</span>
         <h1>Meine Vorhersage</h1>
         <p>
@@ -149,6 +158,14 @@
                     return "Ist es die " + this.predictionSuit + " " + this.predictionValue + "?";
                 },
 
+                restartTrick(event) {
+                    event.preventDefault();
+                    this.firstChoice = null;
+                    this.secondChoice = null;
+                    this.thirdChoice = null;
+                    content.scrollTop = 0;
+                },
+
                 setChoice(value) {
                     if (this.firstChoice == null) {
                         this.firstChoice = value;
@@ -160,20 +177,18 @@
                 },
 
                 selectChoice(event) {
-                    const touchX = event.touches[0].clientX;
-                    const touchY = event.touches[0].clientY;
-                    const elemWidth = content.offsetWidth;
-                    const elemHeight = content.offsetHeight;
-
-                    if (touchY >= elemHeight/2) {
-                        if (touchX < elemWidth/2) {
-                            if (touchY < elemHeight*3/4) {
+                    const touchX = event.touches[0].screenX;
+                    const touchY = event.touches[0].screenY;
+                    
+                    if (touchY >= window.innerHeight/2) {
+                        if (touchX < window.innerWidth/2) {
+                            if (touchY < window.innerHeight*3/4) {
                                 this.setChoice(0);
                             } else {
                                 this.setChoice(2);
                             }
                         } else {
-                            if (touchY < elemHeight*3/4) {
+                            if (touchY < window.innerHeight*3/4) {
                                 this.setChoice(1);
                             } else {
                                 this.setChoice(3);
